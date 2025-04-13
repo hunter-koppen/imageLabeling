@@ -7,6 +7,7 @@
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    margin-bottom: 1rem;
 }
 
 .label-selector button {
@@ -28,10 +29,42 @@
     transform: scale(1.05);
 }
 
+.image-labeling-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
 .image-labeling-container img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+}
+
+.annotation-controls {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.annotation-controls button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.annotation-controls button:hover:not(.disabled) {
+    background: #f0f0f0;
+    transform: scale(1.05);
+}
+
+.annotation-controls button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f5f5f5;
 }
 
 /* Style for annotation shapes */
