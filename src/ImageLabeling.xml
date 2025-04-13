@@ -4,13 +4,31 @@
         xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
     <name>Image Labeling</name>
-    <description/>
+    <description>Widget for annotating images with labels</description>
     <icon/>
     <properties>
         <propertyGroup caption="General">
-            <property key="sampleText" type="string" required="false">
-                <caption>Default value</caption>
-                <description>Sample text input</description>
+            <property key="image" type="image" required="true">
+                <caption>Image</caption>
+                <description>The image to be annotated</description>
+            </property>
+            <property key="labelList" type="datasource" isList="true">
+                <caption>Label List</caption>
+                <description>List of available labels</description>
+            </property>
+            <property key="labelTitle" type="expression" required="true" dataSource="labelList">
+                <caption>Label Title</caption>
+                <description>The name of the label</description>
+                <returnType type="String" />
+            </property>
+            <property key="labelColor" type="expression" defaultValue="'#FF0000'" required="false" dataSource="labelList">
+                <caption>Label Color</caption>
+                <description>The color of the label (hex code)</description>
+                <returnType type="String" />
+            </property>
+            <property key="onChange" type="action" required="false">
+                <caption>On Change</caption>
+                <description>Action to be executed when annotations change</description>
             </property>
         </propertyGroup>
     </properties>
