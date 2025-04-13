@@ -1,9 +1,9 @@
 {
-  "name": "imageannotate",
-  "widgetName": "ImageAnnotate",
+  "name": "imagelabeling",
+  "widgetName": "ImageLabeling",
   "version": "1.0.0",
-  "description": "My widget description",
-  "copyright": "Kobeon B.V. 2024",
+  "description": "",
+  "copyright": "Kobeon B.V. 2025",
   "author": "Hunter Koppen",
   "engines": {
     "node": ">=16"
@@ -25,10 +25,12 @@
     "release": "pluggable-widgets-tools release:web"
   },
   "devDependencies": {
-    "@mendix/pluggable-widgets-tools": "^10.15.0"
+    "@mendix/pluggable-widgets-tools": "^10.21.0"
   },
   "dependencies": {
-    "classnames": "^2.2.6"
+    "classnames": "^2.2.6",
+    "konva": "^9.3.20",
+    "react-konva": "^19.0.3"
   },
   "resolutions": {
     "react": "^18.2.0",

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget id="kobeon.imageannotate.ImageAnnotate" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
+<widget id="kobeon.imagelabeling.ImageLabeling" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
         supportedPlatform="Web"
         xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
-    <name>Image Annotate</name>
-    <description>My widget description</description>
+    <name>Image Labeling</name>
+    <description/>
     <icon/>
     <properties>
         <propertyGroup caption="General">
