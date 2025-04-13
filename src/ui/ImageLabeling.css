@@ -1,8 +1,6 @@
-.image-annotator {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
+.image-labeling {
+    position: relative;
+    overflow: auto;
 }
 
 .label-selector {
@@ -28,4 +26,34 @@
 
 .label-selector button:hover {
     transform: scale(1.05);
+}
+
+.image-labeling-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Style for annotation shapes */
+.annotation-shape {
+    stroke: #ff0000;
+    stroke-width: 2;
+    fill: rgba(255, 0, 0, 0.1);
+}
+
+/* Style for annotation handles */
+.annotation-handle {
+    fill: #ffffff;
+    stroke: #ff0000;
+    stroke-width: 1;
+}
+
+/* Style for annotation labels */
+.annotation-label {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    pointer-events: none;
 }

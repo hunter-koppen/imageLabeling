@@ -1,16 +1,19 @@
 import { createElement } from "react";
 
-import { ImageKonva } from "./components/ImageKonva";
+import { ImageAnnotate } from "./components/ImageAnnotate";
 import "./ui/ImageLabeling.css";
 
-export function ImageLabeling({ image, labelList, labelTitle, labelColor, onChange }) {
+export function ImageLabeling( props ) {
     return (
-        <ImageKonva 
-            image={image} 
-            labelList={labelList}
-            labelTitle={labelTitle}
-            labelColor={labelColor}
-            onChange={onChange} 
+        <ImageAnnotate 
+            image={props.image} 
+            labelList={props.labelList}
+            labelTitle={props.labelTitle}
+            labelColor={props.labelColor}
+            onChange={props.onChange} 
+            width={props.width?.value ? props.width.value : '100%'}
+            height={props.height?.value ? props.height.value : '100%'}
+            classNames={props.class}
         />
     );
 }

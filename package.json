@@ -28,9 +28,8 @@
     "@mendix/pluggable-widgets-tools": "^10.21.0"
   },
   "dependencies": {
-    "classnames": "^2.2.6",
-    "konva": "^8.4.0",
-    "react-konva": "^18.1.0"
+    "@annotorious/react": "^3.3.3",
+    "classnames": "^2.2.6"
   },
   "resolutions": {
     "react": "^18.2.0",
