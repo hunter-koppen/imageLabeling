@@ -41,7 +41,6 @@ export function ImageAnnotate({
                         color: labelColor
                     }
                 ];
-                state.anno.updateAnnotation(annotation);
             };
 
             state.anno.on("createAnnotation", handleCreateAnnotation);
@@ -50,38 +49,20 @@ export function ImageAnnotate({
     }, [state.anno, labelTitle, labelColor]);
 
     useEffect(() => {
-        if (state.anno && state.selectedAnnotation) {
-            const annotation = state.selectedAnnotation;
-            if (!annotation.body?.some(body => body.purpose === "labeling")) {
-                annotation.body = [
-                    ...(annotation.body || []),
-                    {
-                        type: "TextualBody",
-                        purpose: "labeling",
-                        value: labelTitle,
-                        color: labelColor
-                    }
-                ];
-                state.anno.updateAnnotation(annotation);
-            }
-        }
-    }, [state.anno, labelTitle, labelColor, state.selectedAnnotation]);
-
-    useEffect(() => {
-        if (actionUndo?.value === true && state.anno) {
-            actionUndo.setValue(false);
-            if (state.anno.canUndo()) {
+        if (actionUndo?.value === true) {
+            if (state.anno?.canUndo()) {
                 state.anno.undo();
             }
+            actionUndo.setValue(false);
         }
     }, [actionUndo, state.anno]);
 
     useEffect(() => {
-        if (actionRedo?.value === true && state.anno) {
-            actionRedo.setValue(false);
-            if (state.anno.canRedo()) {
+        if (actionRedo?.value === true) {
+            if (state.anno?.canRedo()) {
                 state.anno.redo();
             }
+            actionRedo.setValue(false);
         }
     }, [actionRedo, state.anno]);
 
