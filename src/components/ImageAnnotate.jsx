@@ -22,7 +22,6 @@ export function ImageAnnotate({
         anno: null,
         selectedAnnotation: null
     });
-    const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
     const imgRef = useRef(null);
 
     useEffect(() => {
@@ -88,25 +87,35 @@ export function ImageAnnotate({
     }, [actionClear, state.anno]);
 
     useEffect(() => {
-        if (exportAnnotations?.value === true && state.anno && XMLString) {
-            const annotations = state.anno.getAnnotations();
-            if (imageDimensions.width > 0 && imageDimensions.height > 0) {
+        if (exportAnnotations?.value === true) {
+            if (state.anno && XMLString && imgRef.current && imgRef.current.naturalWidth > 0 && imgRef.current.naturalHeight > 0) {
+                const annotations = state.anno.getAnnotations();
+                const currentWidth = imgRef.current.naturalWidth;
+                const currentHeight = imgRef.current.naturalHeight;
                 const xmlString = formatAnnotationsToPascalVOC(
                     annotations,
                     image.value?.uri,
-                    imageDimensions.width,
-                    imageDimensions.height
+                    currentWidth,
+                    currentHeight
                 );
                 XMLString.setValue(xmlString);
                 if (onExport && onExport.canExecute) {
                     onExport.execute();
                 }
             } else {
-                console.warn("Image dimensions not available for export.");
+                console.warn("Cannot export annotations: Annotator not ready, XML string missing, or image dimensions not available.");
             }
+            // Reset the export trigger regardless of success/failure
             exportAnnotations.setValue(false);
         }
-    }, [exportAnnotations, XMLString, state.anno, image, imageDimensions, onExport]);
+    }, [exportAnnotations, XMLString, state.anno, image, onExport]);
+
+    useEffect(() => {
+        if (state.anno) {
+            state.anno.clearAnnotations();
+            setState(prev => ({ ...prev, selectedAnnotation: null }));
+        }
+    }, [image?.value?.uri, state.anno]);
 
     function AnnoLoader() {
         const anno = useAnnotator();
@@ -133,14 +142,6 @@ export function ImageAnnotate({
                                 ref={imgRef}
                                 src={image.value.uri}
                                 alt="Annotatable"
-                                onLoad={() => {
-                                    if (imgRef.current) {
-                                        setImageDimensions({
-                                            width: imgRef.current.naturalWidth,
-                                            height: imgRef.current.naturalHeight
-                                        });
-                                    }
-                                }}
                             />
                         </ImageAnnotator>
                     </Annotorious>
