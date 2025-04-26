@@ -70,14 +70,18 @@ export function ImageAnnotate({
     useEffect(() => {
         if (actionUndo?.value === true && state.anno) {
             actionUndo.setValue(false);
-            state.anno.undo();
+            if (state.anno.canUndo()) {
+                state.anno.undo();
+            }
         }
     }, [actionUndo, state.anno]);
 
     useEffect(() => {
         if (actionRedo?.value === true && state.anno) {
             actionRedo.setValue(false);
-            state.anno.redo();
+            if (state.anno.canRedo()) {
+                state.anno.redo();
+            }
         }
     }, [actionRedo, state.anno]);
 
@@ -103,14 +107,12 @@ export function ImageAnnotate({
         useEffect(() => {
             if (anno && !state.anno) {
                 const selectionHandler = annotations => {
+                    console.log("Selection changed event fired. Annotations:", annotations);
                     setState(prev => ({ ...prev, selectedAnnotation: annotations[0] || null }));
+                    console.log("Selected annotation state updated to:", annotations[0] || null);
                 };
                 anno.on("selectionChanged", selectionHandler);
                 setState(prev => ({ ...prev, anno }));
-
-                return () => {
-                    anno.off("selectionChanged", selectionHandler);
-                };
             }
         }, [anno]);
         return null;
