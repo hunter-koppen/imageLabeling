@@ -49,6 +49,7 @@ export function ImageAnnotate({
             state.anno.on("createAnnotation", handleCreateAnnotation);
             return () => state.anno.off("createAnnotation", handleCreateAnnotation);
         }
+        return undefined;
     }, [state.anno, labelTitle, labelColor]);
 
     useEffect(() => {
@@ -88,7 +89,13 @@ export function ImageAnnotate({
 
     useEffect(() => {
         if (exportAnnotations?.value === true) {
-            if (state.anno && XMLString && imgRef.current && imgRef.current.naturalWidth > 0 && imgRef.current.naturalHeight > 0) {
+            if (
+                state.anno &&
+                XMLString &&
+                imgRef.current &&
+                imgRef.current.naturalWidth > 0 &&
+                imgRef.current.naturalHeight > 0
+            ) {
                 const annotations = state.anno.getAnnotations();
                 const currentWidth = imgRef.current.naturalWidth;
                 const currentHeight = imgRef.current.naturalHeight;
@@ -103,7 +110,9 @@ export function ImageAnnotate({
                     onExport.execute();
                 }
             } else {
-                console.warn("Cannot export annotations: Annotator not ready, XML string missing, or image dimensions not available.");
+                console.warn(
+                    "Cannot export annotations: Annotator not ready, XML string missing, or image dimensions not available."
+                );
             }
             // Reset the export trigger regardless of success/failure
             exportAnnotations.setValue(false);
@@ -138,11 +147,7 @@ export function ImageAnnotate({
                     <Annotorious>
                         <AnnoLoader />
                         <ImageAnnotator>
-                            <img
-                                ref={imgRef}
-                                src={image.value.uri}
-                                alt="Annotatable"
-                            />
+                            <img ref={imgRef} src={image.value.uri} alt="Annotatable" />
                         </ImageAnnotator>
                     </Annotorious>
                 )}
