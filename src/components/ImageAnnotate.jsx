@@ -7,19 +7,23 @@ export function ImageAnnotate({
     image,
     labelTitle,
     labelColor = "#FF0000",
-    onChange,
     width,
     height,
     classNames,
     actionUndo,
     actionRedo,
     actionDeleteSelected,
-    actionClear
+    actionClear,
+    exportAnnotations,
+    XMLString,
+    onExport
 }) {
     const [state, setState] = useState({
         anno: null,
         selectedAnnotation: null
     });
+    const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+    const imgRef = useRef(null);
 
     useEffect(() => {
         if (state.anno) {
@@ -83,14 +87,33 @@ export function ImageAnnotate({
         }
     }, [actionClear, state.anno]);
 
+    useEffect(() => {
+        if (exportAnnotations?.value === true && state.anno && XMLString) {
+            const annotations = state.anno.getAnnotations();
+            if (imageDimensions.width > 0 && imageDimensions.height > 0) {
+                const xmlString = formatAnnotationsToPascalVOC(
+                    annotations,
+                    image.value?.uri,
+                    imageDimensions.width,
+                    imageDimensions.height
+                );
+                XMLString.setValue(xmlString);
+                if (onExport && onExport.canExecute) {
+                    onExport.execute();
+                }
+            } else {
+                console.warn("Image dimensions not available for export.");
+            }
+            exportAnnotations.setValue(false);
+        }
+    }, [exportAnnotations, XMLString, state.anno, image, imageDimensions, onExport]);
+
     function AnnoLoader() {
         const anno = useAnnotator();
         useEffect(() => {
             if (anno && !state.anno) {
                 const selectionHandler = annotations => {
-                    console.log("Selection changed event fired. Annotations:", annotations);
                     setState(prev => ({ ...prev, selectedAnnotation: annotations[0] || null }));
-                    console.log("Selected annotation state updated to:", annotations[0] || null);
                 };
                 anno.on("selectionChanged", selectionHandler);
                 setState(prev => ({ ...prev, anno }));
@@ -106,11 +129,73 @@ export function ImageAnnotate({
                     <Annotorious>
                         <AnnoLoader />
                         <ImageAnnotator>
-                            <img src={image.value.uri} alt="Annotatable" />
+                            <img
+                                ref={imgRef}
+                                src={image.value.uri}
+                                alt="Annotatable"
+                                onLoad={() => {
+                                    if (imgRef.current) {
+                                        setImageDimensions({
+                                            width: imgRef.current.naturalWidth,
+                                            height: imgRef.current.naturalHeight
+                                        });
+                                    }
+                                }}
+                            />
                         </ImageAnnotator>
                     </Annotorious>
                 )}
             </div>
         </div>
     );
+}
+
+// Helper function to format annotations to PASCAL VOC XML
+function formatAnnotationsToPascalVOC(annotations, imageUrl, imageWidth, imageHeight) {
+    let xml = "<annotation>\n";
+    xml += `  <filename>${imageUrl ? imageUrl.substring(imageUrl.lastIndexOf("/") + 1) : "image.jpg"}</filename>\n`;
+    xml += `  <size>
+    <width>${imageWidth}</width>
+    <height>${imageHeight}</height>
+    <depth>3</depth>
+  </size>
+`;
+
+    annotations.forEach(annotation => {
+        const label = annotation.body && annotation.body[0] ? annotation.body[0].value : "unknown";
+        const selector = annotation.target.selector;
+
+        if (selector && selector.type === "RECTANGLE" && selector.geometry) {
+            const geom = selector.geometry;
+
+            const x = parseInt(geom.x, 10);
+            const y = parseInt(geom.y, 10);
+            const w = parseInt(geom.w, 10);
+            const h = parseInt(geom.h, 10);
+
+            // Calculate bounding box coordinates
+            const xmin = x;
+            const ymin = y;
+            const xmax = x + w;
+            const ymax = y + h;
+
+            xml += "  <object>\n";
+            xml += `    <name>${label}</name>\n`;
+            xml += `    <pose>Unspecified</pose>\n`;
+            xml += `    <truncated>0</truncated>\n`;
+            xml += `    <difficult>0</difficult>\n`;
+            xml += "    <bndbox>\n";
+            xml += `      <xmin>${xmin}</xmin>\n`;
+            xml += `      <ymin>${ymin}</ymin>\n`;
+            xml += `      <xmax>${xmax}</xmax>\n`;
+            xml += `      <ymax>${ymax}</ymax>\n`;
+            xml += "    </bndbox>\n";
+            xml += "  </object>\n";
+        } else {
+            console.warn("Skipping annotation with unexpected selector:", annotation.id, selector?.type);
+        }
+    });
+
+    xml += "</annotation>";
+    return xml;
 }

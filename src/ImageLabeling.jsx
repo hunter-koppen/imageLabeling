@@ -9,7 +9,6 @@ export function ImageLabeling(props) {
             image={props.image}
             labelTitle={props.labelTitle?.value}
             labelColor={props.labelColor?.value}
-            onChange={props.onChange}
             width={props.width?.value ? props.width.value : "100%"}
             height={props.height?.value ? props.height.value : "100%"}
             classNames={props.class}
@@ -17,6 +16,9 @@ export function ImageLabeling(props) {
             actionRedo={props.actionRedo}
             actionDeleteSelected={props.actionDeleteSelected}
             actionClear={props.actionClear}
+            exportAnnotations={props.exportAnnotations}
+            XMLString={props.XMLString}
+            onExport={props.onExport}
         />
     );
 }

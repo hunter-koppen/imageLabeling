@@ -37,7 +37,7 @@
             </propertyGroup>
         </propertyGroup>
         <propertyGroup caption="Actions">
-            <propertyGroup caption="Actions">
+            <propertyGroup caption="UI Actions">
                 <property key="actionUndo" type="attribute" required="false">
                     <caption>Undo</caption>
                     <description>Toggle boolean to true to fire undo action</description>
@@ -67,10 +67,24 @@
                     </attributeTypes>
                 </property>
             </propertyGroup>
-            <propertyGroup caption="Events">
-                <property key="onChange" type="action" required="false">
-                    <caption>On Change</caption>
-                    <description>Action to be executed when annotations change</description>
+            <propertyGroup caption="Export Actions">
+                <property key="exportAnnotations" type="attribute" required="false">
+                    <caption>Export Annotations</caption>
+                    <description>Toggle boolean to true to fire export annotations action</description>
+                    <attributeTypes>
+                        <attributeType name="Boolean"/>
+                    </attributeTypes>
+                </property>
+                <property key="XMLString" type="attribute" required="false">
+                    <caption>XMLString</caption>
+                    <description>The XML string of the annotations</description>
+                    <attributeTypes>
+                        <attributeType name="String"/>
+                    </attributeTypes>
+                </property>
+                <property key="onExport" type="action" required="false">
+                    <caption>On export</caption>
+                    <description></description>
                 </property>
             </propertyGroup>
         </propertyGroup>
