@@ -3,90 +3,12 @@
     overflow: auto;
 }
 
-.label-selector {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-}
-
-.label-selector button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    color: white;
-    font-weight: bold;
-    transition: transform 0.2s;
-}
-
-.label-selector button.selected {
-    transform: scale(1.1);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-.label-selector button:hover {
-    transform: scale(1.05);
-}
-
 .image-labeling-container {
     position: relative;
-    margin-bottom: 1rem;
 }
 
 .image-labeling-container img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-}
-
-.annotation-controls {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-    margin-top: 1rem;
-}
-
-.annotation-controls button {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.annotation-controls button:hover:not(.disabled) {
-    background: #f0f0f0;
-    transform: scale(1.05);
-}
-
-.annotation-controls button.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: #f5f5f5;
-}
-
-/* Style for annotation shapes */
-.annotation-shape {
-    stroke: #ff0000;
-    stroke-width: 2;
-    fill: rgba(255, 0, 0, 0.1);
-}
-
-/* Style for annotation handles */
-.annotation-handle {
-    fill: #ffffff;
-    stroke: #ff0000;
-    stroke-width: 1;
-}
-
-/* Style for annotation labels */
-.annotation-label {
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ccc;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    pointer-events: none;
 }

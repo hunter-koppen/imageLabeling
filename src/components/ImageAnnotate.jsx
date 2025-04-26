@@ -94,7 +94,7 @@ export function ImageAnnotate({
                 const currentHeight = imgRef.current.naturalHeight;
                 const xmlString = formatAnnotationsToPascalVOC(
                     annotations,
-                    image.value?.uri,
+                    image.value?.name,
                     currentWidth,
                     currentHeight
                 );
@@ -152,9 +152,9 @@ export function ImageAnnotate({
 }
 
 // Helper function to format annotations to PASCAL VOC XML
-function formatAnnotationsToPascalVOC(annotations, imageUrl, imageWidth, imageHeight) {
+function formatAnnotationsToPascalVOC(annotations, imageName, imageWidth, imageHeight) {
     let xml = "<annotation>\n";
-    xml += `  <filename>${imageUrl ? imageUrl.substring(imageUrl.lastIndexOf("/") + 1) : "image.jpg"}</filename>\n`;
+    xml += `  <filename>${imageName ? imageName : "image.jpg"}</filename>\n`;
     xml += `  <size>
     <width>${imageWidth}</width>
     <height>${imageHeight}</height>
