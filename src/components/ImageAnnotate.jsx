@@ -3,149 +3,130 @@ import { Annotorious, ImageAnnotator, useAnnotator } from "@annotorious/react";
 
 import "@annotorious/react/annotorious-react.css";
 
-export function ImageAnnotate({ image, labelList, labelTitle, labelColor, onChange, width, height, classNames }) {
+export function ImageAnnotate({
+    image,
+    labelTitle,
+    labelColor = "#FF0000",
+    onChange,
+    width,
+    height,
+    classNames,
+    actionUndo,
+    actionRedo,
+    actionDeleteSelected,
+    actionClear
+}) {
     const [state, setState] = useState({
         anno: null,
         selectedAnnotation: null
     });
-    const [selectedLabel, setSelectedLabel] = useState(null);
 
-    const processedLabels =
-        labelList?.items?.map(item => ({
-            id: item.id,
-            title: labelTitle.get(item).value,
-            color: labelColor.get(item).value
-        })) || [];
-
-    // Set up the annotation style based on selected label
     useEffect(() => {
         if (state.anno) {
             state.anno.setStyle({
-                stroke: selectedLabel?.color || "#FF0000",
-                fill: selectedLabel?.color + "33" || "#FF000033" // Add transparency
+                stroke: labelColor,
+                fill: labelColor + "33"
             });
         }
-    }, [state.anno, selectedLabel]);
+    }, [state.anno, labelColor]);
 
-    // Handle new annotation creation
     useEffect(() => {
-        if (state.anno && selectedLabel) {
+        if (state.anno) {
             const handleCreateAnnotation = annotation => {
-                if (selectedLabel) {
-                    annotation.body = [
-                        {
-                            type: "TextualBody",
-                            purpose: "labeling",
-                            value: selectedLabel.title,
-                            color: selectedLabel.color
-                        }
-                    ];
-                    state.anno.updateAnnotation(annotation);
-                }
+                annotation.body = [
+                    {
+                        type: "TextualBody",
+                        purpose: "labeling",
+                        value: labelTitle,
+                        color: labelColor
+                    }
+                ];
+                state.anno.updateAnnotation(annotation);
             };
 
             state.anno.on("createAnnotation", handleCreateAnnotation);
             return () => state.anno.off("createAnnotation", handleCreateAnnotation);
         }
-    }, [state.anno, selectedLabel]);
+    }, [state.anno, labelTitle, labelColor]);
 
-    // Handle selection changes
     useEffect(() => {
-        if (state.anno && selectedLabel && state.selectedAnnotation) {
+        if (state.anno && state.selectedAnnotation) {
             const annotation = state.selectedAnnotation;
             if (!annotation.body?.some(body => body.purpose === "labeling")) {
                 annotation.body = [
+                    ...(annotation.body || []),
                     {
                         type: "TextualBody",
                         purpose: "labeling",
-                        value: selectedLabel.title,
-                        color: selectedLabel.color
+                        value: labelTitle,
+                        color: labelColor
                     }
                 ];
                 state.anno.updateAnnotation(annotation);
             }
         }
-    }, [state.anno, selectedLabel, state.selectedAnnotation]);
+    }, [state.anno, labelTitle, labelColor, state.selectedAnnotation]);
 
-    const handleUndo = () => {
-        if (state.anno) {
+    useEffect(() => {
+        if (actionUndo?.value === true && state.anno) {
+            actionUndo.setValue(false);
             state.anno.undo();
         }
-    };
+    }, [actionUndo, state.anno]);
 
-    const handleRedo = () => {
-        if (state.anno) {
+    useEffect(() => {
+        if (actionRedo?.value === true && state.anno) {
+            actionRedo.setValue(false);
             state.anno.redo();
         }
-    };
+    }, [actionRedo, state.anno]);
 
-    const handleClear = () => {
-        if (state.anno) {
+    useEffect(() => {
+        if (actionDeleteSelected?.value === true && state.anno) {
+            actionDeleteSelected.setValue(false);
+            if (state.anno && state.selectedAnnotation) {
+                state.anno.removeAnnotation(state.selectedAnnotation);
+                setState(prev => ({ ...prev, selectedAnnotation: null }));
+            }
+        }
+    }, [actionDeleteSelected, state.anno]);
+
+    useEffect(() => {
+        if (actionClear?.value === true && state.anno) {
+            actionClear.setValue(false);
             state.anno.clearAnnotations();
         }
-    };
-
-    const handleDeleteSelected = () => {
-        if (state.anno && state.selectedAnnotation) {
-            state.anno.removeAnnotation(state.selectedAnnotation);
-            setState(prev => ({ ...prev, selectedAnnotation: null }));
-        }
-    };
+    }, [actionClear, state.anno]);
 
     function AnnoLoader() {
         const anno = useAnnotator();
-        if (anno && !state.anno) {
-            anno.on("selectionChanged", annotations => {
-                // According to docs, annotations is an array but currently only contains one annotation
-                setState(prev => ({ ...prev, selectedAnnotation: annotations[0] || null }));
-            });
-            setState(prev => ({ ...prev, anno }));
-        }
+        useEffect(() => {
+            if (anno && !state.anno) {
+                const selectionHandler = annotations => {
+                    setState(prev => ({ ...prev, selectedAnnotation: annotations[0] || null }));
+                };
+                anno.on("selectionChanged", selectionHandler);
+                setState(prev => ({ ...prev, anno }));
+
+                return () => {
+                    anno.off("selectionChanged", selectionHandler);
+                };
+            }
+        }, [anno]);
         return null;
     }
 
     return (
         <div className={"image-labeling " + classNames} style={{ width, height }}>
-            <div className="label-selector">
-                {processedLabels.map(label => (
-                    <button
-                        key={label.id}
-                        className={selectedLabel?.id === label.id ? "selected" : ""}
-                        onClick={() => setSelectedLabel(label)}
-                        style={{ backgroundColor: label.color }}
-                    >
-                        {label.title}
-                    </button>
-                ))}
-            </div>
             <div className="image-labeling-container">
                 {image?.value?.uri && (
                     <Annotorious>
                         <AnnoLoader />
                         <ImageAnnotator>
-                            <img src={image.value.uri} />
+                            <img src={image.value.uri} alt="Annotatable" />
                         </ImageAnnotator>
                     </Annotorious>
                 )}
-            </div>
-            <div className="annotation-controls">
-                <button onClick={handleUndo} title="Undo">
-                    ↩️
-                </button>
-                <button onClick={handleRedo} title="Redo">
-                    ↪️
-                </button>
-                <button
-                    onClick={handleDeleteSelected}
-                    title="Delete Selected"
-                    disabled={!state.selectedAnnotation}
-                    className={!state.selectedAnnotation ? "disabled" : ""}
-                >
-                    🗑️
-                </button>
-                <button onClick={handleClear} title="Clear All">
-                    🗑️🗑️
-                </button>
             </div>
         </div>
     );

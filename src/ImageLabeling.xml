@@ -12,23 +12,15 @@
                     <caption>Image</caption>
                     <description>The image to be annotated</description>
                 </property>
-                <property key="labelList" type="datasource" isList="true">
-                    <caption>Label List</caption>
-                    <description>List of available labels</description>
-                </property>
-                <property key="labelTitle" type="expression" required="true" dataSource="labelList">
+                <property key="labelTitle" type="expression" required="true">
                     <caption>Label Title</caption>
                     <description>The name of the label</description>
                     <returnType type="String" />
                 </property>
-                <property key="labelColor" type="expression" defaultValue="'#FF0000'" required="false" dataSource="labelList">
+                <property key="labelColor" type="expression" defaultValue="'#FF0000'" required="false">
                     <caption>Label Color</caption>
                     <description>The color of the label (hex code)</description>
                     <returnType type="String" />
-                </property>
-                <property key="onChange" type="action" required="false">
-                    <caption>On Change</caption>
-                    <description>Action to be executed when annotations change</description>
                 </property>
             </propertyGroup>
             <propertyGroup caption="Control">
@@ -41,6 +33,44 @@
                     <caption>Height</caption>
                     <description/>
                     <returnType type="String" />
+                </property>
+            </propertyGroup>
+        </propertyGroup>
+        <propertyGroup caption="Actions">
+            <propertyGroup caption="Actions">
+                <property key="actionUndo" type="attribute" required="false">
+                    <caption>Undo</caption>
+                    <description>Toggle boolean to true to fire undo action</description>
+                    <attributeTypes>
+                        <attributeType name="Boolean"/>
+                    </attributeTypes>
+                </property>
+                <property key="actionRedo" type="attribute" required="false">
+                    <caption>Redo</caption>
+                    <description>Toggle boolean to true to fire redo action</description>
+                    <attributeTypes>
+                        <attributeType name="Boolean"/>
+                    </attributeTypes>
+                </property>
+                <property key="actionDeleteSelected" type="attribute" required="false">
+                    <caption>Delete Selected</caption>
+                    <description>Toggle boolean to true to fire delete selected action</description>
+                    <attributeTypes>
+                        <attributeType name="Boolean"/>
+                    </attributeTypes>
+                </property>
+                <property key="actionClear" type="attribute" required="false">
+                    <caption>Clear</caption>
+                    <description>Toggle boolean to true to fire clear action</description>
+                    <attributeTypes>
+                        <attributeType name="Boolean"/>
+                    </attributeTypes>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Events">
+                <property key="onChange" type="action" required="false">
+                    <caption>On Change</caption>
+                    <description>Action to be executed when annotations change</description>
                 </property>
             </propertyGroup>
         </propertyGroup>
